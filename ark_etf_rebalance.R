@@ -98,8 +98,8 @@ arkg.merge<-rbind(
   arkg.new.companies
 )
 
-arkg.merge[51,]
-arkg.merge$prev.weights[which(arkg.merge$company=='MORGAN STANLEY GOVT INSTL 8035')]<-0
+arkg.merge
+arkg.merge$prev.weights[which(arkg.merge$company=='SEER INC')]<-0
 #Getting the new weights
 arkg.merge$prev.weights<-arkg.merge$`weight(%)`
 arkg.merge$prev.weights[which(arkg.merge$final.weights==0)]<-0
