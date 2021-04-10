@@ -133,3 +133,4 @@ arkg.final$final.weights<-rounded.weights
 arkg.final<-arkg.final[order(arkg.final$final.weights,decreasing = T),]
 write.csv(arkg.final, 'ARK_GENOMIC_REVOLUTION_template.csv', quote = F, row.names = F)
 sum(rounded.weights)
+
