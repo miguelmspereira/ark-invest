@@ -38,7 +38,7 @@ arkk.merge<-rbind(
   arkk.merge,
   arkk.new.companies
 )
-
+arkk.merge$`weight(%)`[which(arkk.merge$company=='PACCAR INC')]<-arkk.new$`weight(%)`[which(arkk.new$company=='PACCAR INC')]
 #Getting the new weights
 arkk.merge$prev.weights<-arkk.merge$`weight(%)`
 arkk.merge$prev.weights[which(arkk.merge$final.weights==0)]<-0
