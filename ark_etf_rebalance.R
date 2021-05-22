@@ -99,7 +99,7 @@ arkg.merge<-rbind(
 )
 
 
-arkg.merge$prev.weights[which(arkg.merge$company=='RECURSION PHARMACEUTICALS-A')]<-0
+#arkg.merge$prev.weights[which(arkg.merge$company=='RECURSION PHARMACEUTICALS-A')]<-0
 #Getting the new weights
 arkg.merge$prev.weights<-arkg.merge$`weight(%)`
 arkg.merge$prev.weights[which(arkg.merge$final.weights==0)]<-0
