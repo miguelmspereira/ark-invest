@@ -10,10 +10,11 @@ arkk<-fread('ARK_INNOVATION_template.csv') %>% select(fund, company, ticker, pre
 arkg<-fread('ARK_GENOMIC_REVOLUTION_template.csv') %>% select(fund, company, ticker, prev.weights, final.weights)
 
 #Read file
-arkk.new<-fread('ARK_INNOVATION_ETF_ARKK_HOLDINGS.csv')
-arkg.new<-fread('ARK_GENOMIC_REVOLUTION_MULTISECTOR_ETF_ARKG_HOLDINGS.csv')
+#arkk.new<-fread('ARK_INNOVATION_ETF_ARKK_HOLDINGS.csv')
+#arkg.new<-fread('ARK_GENOMIC_REVOLUTION_MULTISECTOR_ETF_ARKG_HOLDINGS.csv')
 
-
+arkk.new <- read.csv('https://ark-funds.com/wp-content/fundsiteliterature/csv/ARK_INNOVATION_ETF_ARKK_HOLDINGS.csv') %>% drop_na(.)
+arkg.new <- read.csv('https://ark-funds.com/wp-content/fundsiteliterature/csv/ARK_GENOMIC_REVOLUTION_MULTISECTOR_ETF_ARKG_HOLDINGS.csv') %>% drop_na(.)
 
 ###############################################################################
 ###############################---ARKK---######################################
@@ -21,14 +22,14 @@ arkg.new<-fread('ARK_GENOMIC_REVOLUTION_MULTISECTOR_ETF_ARKG_HOLDINGS.csv')
 arkk.new$company[arkk.new$company %notin% arkk$company]
 
 arkk.new.companies<-arkk.new[arkk.new$company %notin% arkk$company,] %>%
-  select(company,`weight(%)`,fund,ticker)
-arkk.new.companies$prev.weights<-arkk.new.companies$`weight(%)`
-arkk.new.companies$final.weights<-arkk.new.companies$`weight(%)`
+  select(company,weight...,fund,ticker)
+arkk.new.companies$prev.weights<-arkk.new.companies$weight...
+arkk.new.companies$final.weights<-arkk.new.companies$weight...
 arkk.new.companies
 
 #Merge
 arkk.merge<-merge(
-  arkk.new %>% select(company,`weight(%)`),
+  arkk.new %>% select(company,weight...),
   arkk,
   by='company',
   sort=F
@@ -38,9 +39,9 @@ arkk.merge<-rbind(
   arkk.merge,
   arkk.new.companies
 )
-arkk.merge$`weight(%)`[which(arkk.merge$company=='PACCAR INC')]<-arkk.new$`weight(%)`[which(arkk.new$company=='PACCAR INC')]
+#arkk.merge$weight...[which(arkk.merge$company=='PACCAR INC')]<-arkk.new$weight...[which(arkk.new$company=='PACCAR INC')]
 #Getting the new weights
-arkk.merge$prev.weights<-arkk.merge$`weight(%)`
+arkk.merge$prev.weights<-arkk.merge$weight...
 arkk.merge$prev.weights[which(arkk.merge$final.weights==0)]<-0
 
 weights<-arkk.merge$prev.weights*100/sum(arkk.merge$prev.weights)
@@ -80,14 +81,14 @@ write.csv(arkk.final, 'ARK_INNOVATION_template.csv', quote = F, row.names = F)
 arkg.new$company[arkg.new$company %notin% arkg$company]
 
 arkg.new.companies<-arkg.new[arkg.new$company %notin% arkg$company,] %>%
-  select(company,`weight(%)`,fund,ticker)
-arkg.new.companies$prev.weights<-arkg.new.companies$`weight(%)`
-arkg.new.companies$final.weights<-arkg.new.companies$`weight(%)`
+  select(company,weight...,fund,ticker)
+arkg.new.companies$prev.weights<-arkg.new.companies$weight...
+arkg.new.companies$final.weights<-arkg.new.companies$weight...
 arkg.new.companies
 
 #Merge
 arkg.merge<-merge(
-  arkg.new %>% select(company,`weight(%)`),
+  arkg.new %>% select(company,weight...),
   arkg,
   by='company',
   sort=F
@@ -101,7 +102,7 @@ arkg.merge<-rbind(
 
 #arkg.merge$prev.weights[which(arkg.merge$company=='RECURSION PHARMACEUTICALS-A')]<-0
 #Getting the new weights
-arkg.merge$prev.weights<-arkg.merge$`weight(%)`
+arkg.merge$prev.weights<-arkg.merge$weight...
 arkg.merge$prev.weights[which(arkg.merge$final.weights==0)]<-0
 
 weights<-arkg.merge$prev.weights*100/sum(arkg.merge$prev.weights)
