@@ -10,11 +10,22 @@ arkk <- fread('ARK_INNOVATION_template.csv') %>% select(fund, company, ticker, p
 arkg <- fread('ARK_GENOMIC_REVOLUTION_template.csv') %>% select(fund, company, ticker, prev.weights, final.weights)
 
 #Read file
-#arkk.new <- fread('ARK_INNOVATION_ETF_ARKK_HOLDINGS.csv')
-#arkg.new <- fread('ARK_GENOMIC_REVOLUTION_MULTISECTOR_ETF_ARKG_HOLDINGS.csv')
+#arkk.new <- read_csv('ARK_INNOVATION_ETF_ARKK_HOLDINGS.csv')
+arkk.new <- read.csv('https://ark-funds.com/wp-content/uploads/funds-etf-csv/ARK_INNOVATION_ETF_ARKK_HOLDINGS.csv') %>% 
+  drop_na(.)%>%
+  rename(weight = `weight....`) %>%
+  filter(!is.na(company)) %>%
+  mutate(weight = as.numeric(str_replace(weight, "%", ""))) %>% 
+  filter(!is.na(weight))
+#arkg.new <- read_csv('ARK_INNOVATION_ETF_ARKG_HOLDINGS_1635577990.csv')  
+arkg.new <- read.csv('https://ark-funds.com/wp-content/uploads/funds-etf-csv/ARK_GENOMIC_REVOLUTION_ETF_ARKG_HOLDINGS.csv') %>% 
+  drop_na(.)%>%
+  rename(weight = `weight....`) %>%
+  filter(!is.na(company)) %>%
+  mutate(weight = as.numeric(str_replace(weight, "%", ""))) %>% 
+  filter(!is.na(weight))
 
-arkk.new <- read.csv('https://ark-funds.com/wp-content/fundsiteliterature/csv/ARK_INNOVATION_ETF_ARKK_HOLDINGS.csv') %>% drop_na(.)
-arkg.new <- read.csv('https://ark-funds.com/wp-content/fundsiteliterature/csv/ARK_GENOMIC_REVOLUTION_MULTISECTOR_ETF_ARKG_HOLDINGS.csv') %>% drop_na(.)
+
 
 ###############################################################################
 ###############################---ARKK---######################################
@@ -22,14 +33,14 @@ arkg.new <- read.csv('https://ark-funds.com/wp-content/fundsiteliterature/csv/AR
 arkk.new$company[arkk.new$company %notin% arkk$company]
 
 arkk.new.companies <- arkk.new[arkk.new$company %notin% arkk$company,] %>%
-  select(company,weight...,fund,ticker)
-arkk.new.companies$prev.weights <- arkk.new.companies$weight...
-arkk.new.companies$final.weights <- arkk.new.companies$weight...
+  select(company,weight,fund,ticker)
+arkk.new.companies$prev.weights <- arkk.new.companies$weight
+arkk.new.companies$final.weights <- arkk.new.companies$weight
 arkk.new.companies
 
 #Merge
 arkk.merge <- merge(
-  arkk.new %>% select(company,weight...),
+  arkk.new %>% select(company,weight),
   arkk,
   by='company',
   sort=F
@@ -39,9 +50,9 @@ arkk.merge <- rbind(
   arkk.merge,
   arkk.new.companies
 )
-#arkk.merge$weight...[which(arkk.merge$company=='PACCAR INC')] <- arkk.new$weight...[which(arkk.new$company=='PACCAR INC')]
+#arkk.merge$weight[which(arkk.merge$company=='PACCAR INC')] <- arkk.new$weight[which(arkk.new$company=='PACCAR INC')]
 #Getting the new weights
-arkk.merge$prev.weights <- arkk.merge$weight...
+arkk.merge$prev.weights <- as.numeric(arkk.merge$weight)
 arkk.merge$prev.weights[which(arkk.merge$final.weights==0)] <- 0
 
 weights <- arkk.merge$prev.weights*100/sum(arkk.merge$prev.weights)
@@ -81,14 +92,14 @@ write.csv(arkk.final, 'ARK_INNOVATION_template.csv', quote = F, row.names = F)
 arkg.new$company[arkg.new$company %notin% arkg$company]
 
 arkg.new.companies <- arkg.new[arkg.new$company %notin% arkg$company,] %>%
-  select(company,weight...,fund,ticker)
-arkg.new.companies$prev.weights <- arkg.new.companies$weight...
-arkg.new.companies$final.weights <- arkg.new.companies$weight...
+  select(company,weight,fund,ticker)
+arkg.new.companies$prev.weights <- arkg.new.companies$weight
+arkg.new.companies$final.weights <- arkg.new.companies$weight
 arkg.new.companies
 
 #Merge
 arkg.merge <- merge(
-  arkg.new %>% select(company,weight...),
+  arkg.new %>% select(company,weight),
   arkg,
   by='company',
   sort=F
@@ -102,7 +113,7 @@ arkg.merge <- rbind(
 
 #arkg.merge$prev.weights[which(arkg.merge$company=='RECURSION PHARMACEUTICALS-A')] <- 0
 #Getting the new weights
-arkg.merge$prev.weights <- arkg.merge$weight...
+arkg.merge$prev.weights <- arkg.merge$weight
 arkg.merge$prev.weights[which(arkg.merge$final.weights==0)] <- 0
 arkg.merge <- arkg.merge %>% arrange(desc(prev.weights))
 arkg.merge$prev.weights[51:nrow(arkg.merge)] <- 0
@@ -117,6 +128,8 @@ weights5[which(weights<0.5 & weights>0)] <- 0.5
 final.weights <- weights5*total/sum(weights5[-which(weights<0.5 & weights>0)])
 final.weights[which(weights<0.5 & weights>0)] <- 0.5
 sum(final.weights)
+
+
 
 rounded.weights <- round(final.weights,1)
 
